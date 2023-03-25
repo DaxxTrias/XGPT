@@ -1,0 +1,9 @@
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-debian-11
+
+https://computingforgeeks.com/install-php-on-debian-linux-systen/
+
+https://getcomposer.org/doc/00-intro.md#globally
+
+https://www.howtogeek.com/devops/how-to-install-and-use-composer-phps-dependency-manager/
+
+https://laravel.com/docs/4.2
