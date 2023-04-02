@@ -3,19 +3,29 @@ https://computingforgeeks.com/install-php-on-debian-linux-systen/
 https://getcomposer.org/doc/00-intro.md#globally
 https://www.howtogeek.com/devops/how-to-install-and-use-composer-phps-dependency-manager/
 https://laravel.com/docs/4.2
-
+https://copyprogramming.com/howto/how-to-fix-invalid-request-unsupported-ssl-request
 
 
 
 http://localhost:8000/api/command?q=$(test)
 
+composer update
+composer install
+php artisan down
+php artisan up
+php artisan serve 
+sudo apt install mariadb-server
+sudo systemctl start mariadb
+
+
 WSL commands:
 netsh interface portproxy add v4tov4 listenport=8000 listenaddress=0.0.0.0 connectport=8000 connectaddress=172.25.200.51
+netsh interface portproxy reset
 
 Firewall rules:
 - Go to control panel and open advanced firewall rules
-- allow port 3390 through firewall
+- allow port 8000 through firewall
 
 https://github.com/microsoft/WSL/issues/4150#issuecomment-504051131
 https://askubuntu.com/questions/1403508/access-a-web-application-running-in-ubuntu-wsl-from-another-pc-on-the-network/1403545#1403545
-
+https://woshub.com/port-forwarding-in-windows/
