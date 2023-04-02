@@ -7,6 +7,7 @@ use App\src\NightbotAPI;
 use App\Models\Conversation;
 use App\Models\ConversationMessage;
 use Str;
+use Illuminate\Support\Facades\Log;
 
 class XGPT
 {
@@ -27,6 +28,7 @@ class XGPT
 
     public function setConversionId($id)
     {
+        Log::info('setConversionId: ' . $id);
         $conversation = Conversation::find($id);
         if ($conversation) {
             $this->conversation = $conversation;
@@ -35,6 +37,7 @@ class XGPT
 
     public function setMessage($message, $role = 'user')
     {
+        Log::info('setMessage: ' . $message);
         if (!$this->conversation) {
             $this->generateConversion();
         }
@@ -66,6 +69,7 @@ class XGPT
 
     public function storeMessage($message, $role)
     {
+        Log::info('storeMessage: ' . $message);
         ConversationMessage::create([
             'role' => $role,
             'content' => $message,
@@ -99,6 +103,7 @@ class XGPT
             $message = trim(preg_replace('/\s+/', ' ', $message));
 
             $messageLength = 399;
+            Log::info('getResponse1: ' . $message);
             if ($username) {
                 $messageLength -= strlen($username) + 2;
             }
@@ -129,6 +134,7 @@ class XGPT
             }
 
             $message = ($username ? $username .': ' : '') . $message .' #'. $this->conversation->id;
+            Log::info('getResponse2: ' . $message);
             return $message;
         }
 
@@ -148,6 +154,7 @@ class XGPT
             }
 
             $conversation = Conversation::find($string);
+            Log::info('generateConversion: ' . $conversation);
             if (!$conversation) {
                 break;
             }

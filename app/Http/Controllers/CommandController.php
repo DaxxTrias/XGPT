@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\src\XGPT;
+use Illuminate\Support\Facades\Log;
 
 class CommandController extends Controller
 {
@@ -11,7 +12,7 @@ class CommandController extends Controller
     {
         $nbheaders = new \xgerhard\nbheaders\nbheaders;
         if (!$nbheaders->isNightbotRequest()) {
-            return 'Only Nightbot requests allowed.';
+            return 'Only Nightbot requests allowed. you idiot';
         }
 
         if (!$request->has('q') || $request->get('q') == '') {
@@ -31,6 +32,7 @@ class CommandController extends Controller
         }
 
         $XGPT->setMessage(implode(' ', $messageParts));
+        Log::info('messageParts0: ' . $messageParts[0]);
         return $XGPT->getResponse();
     }
 }

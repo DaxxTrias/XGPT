@@ -9,13 +9,20 @@ https://copyprogramming.com/howto/how-to-fix-invalid-request-unsupported-ssl-req
 
 http://localhost:8000/api/command?q=$(test)
 
-composer update
 composer install
+composer update
+sudo apt install php8.1
 php artisan down
+sudo apt install mariadb-server
+sudo apt-get install php-mysql
+sudo apt-get install php8.1-mysql
+sudo mysql_secure_installation
+php artisan migrate
+sudo service mariadb start
+composer dump-autoload
 php artisan up
 php artisan serve 
-sudo apt install mariadb-server
-sudo systemctl start mariadb
+
 
 
 WSL commands:
@@ -29,3 +36,4 @@ Firewall rules:
 https://github.com/microsoft/WSL/issues/4150#issuecomment-504051131
 https://askubuntu.com/questions/1403508/access-a-web-application-running-in-ubuntu-wsl-from-another-pc-on-the-network/1403545#1403545
 https://woshub.com/port-forwarding-in-windows/
+https://mariadb.com/kb/en/getting-installing-and-upgrading-mariadb-not-able-to-access-mariadb-even-fr/
