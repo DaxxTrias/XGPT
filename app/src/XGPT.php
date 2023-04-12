@@ -4,31 +4,31 @@ namespace App\src;
 
 use App\src\OpenAI;
 use App\src\NightbotAPI;
+use App\src\Badges;
 use App\Models\Conversation;
 use App\Models\ConversationMessage;
 use Str;
-use Illuminate\Support\Facades\Log;
+use Log;
 
 class XGPT
 {
     private $nbheaders = null;
     private $conversation = null;
-    private $messages = [
-        [
-            'role' => 'system',
-            'content' => 'You are a helpful assistant for a Twitch chat. Please answer in 250 characters or less.'
-        ]
-    ];
+    private $messages = [];
 
     public function __construct($nbheaders)
     {
         $this->openai = new OpenAI;
         $this->nbheaders = $nbheaders;
+
+        $this->messages[] = [
+            'role' => 'system',
+            'content' => 'You are a helpful assistant for a '. $this->nbheaders->getProvider() .' chat.'
+        ];
     }
 
     public function setConversionId($id)
     {
-        Log::info('setConversionId: ' . $id);
         $conversation = Conversation::find($id);
         if ($conversation) {
             $this->conversation = $conversation;
@@ -37,7 +37,6 @@ class XGPT
 
     public function setMessage($message, $role = 'user')
     {
-        Log::info('setMessage: ' . $message);
         if (!$this->conversation) {
             $this->generateConversion();
         }
@@ -69,7 +68,6 @@ class XGPT
 
     public function storeMessage($message, $role)
     {
-        Log::info('storeMessage: ' . $message);
         ConversationMessage::create([
             'role' => $role,
             'content' => $message,
@@ -81,7 +79,13 @@ class XGPT
     {
         $username = false;
         if ($this->nbheaders->getUser()) {
-            $username = $this->nbheaders->getUser()->displayName;
+            $user = $this->nbheaders->getUser();
+            $username = $user->displayName;
+
+            $badge = Badges::getBadge($user->provider, $user->providerId);
+            if ($badge) {
+                $username = '['. $badge .'] '. $username;
+            }
         }
 
         try {
@@ -94,16 +98,12 @@ class XGPT
             return ($username ? $username .': ' : '') . ' ChatGPT took to long to respond. Please try again in a bit. ResidentSleeper';
         }
 
-        // test data
-        // $response['choices'][0]['message']['content'] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla suscipit leo eget ante cursus dignissim. Donec sit amet metus eget felis mollis porta. Aliquam erat volutpat. Sed at vulputate enim, sit amet posuere massa. Morbi sodales laoreet odio, non iaculis magna faucibus dignissim. Pellentesque fringilla ante lorem, vel ultricies ante ullamcorper a.";
-
         if (isset($response['choices'][0]['message']['content'])) {
             
             $message = $response['choices'][0]['message']['content'];
             $message = trim(preg_replace('/\s+/', ' ', $message));
 
             $messageLength = 399;
-            Log::info('getResponse1: ' . $message);
             if ($username) {
                 $messageLength -= strlen($username) + 2;
             }
@@ -134,8 +134,9 @@ class XGPT
             }
 
             $message = ($username ? $username .': ' : '') . $message .' #'. $this->conversation->id;
-            Log::info('getResponse2: ' . $message);
             return $message;
+        } else {
+            Log::error(print_r($response, true));
         }
 
         return 'Error, unexpected response..';
@@ -154,7 +155,6 @@ class XGPT
             }
 
             $conversation = Conversation::find($string);
-            Log::info('generateConversion: ' . $conversation);
             if (!$conversation) {
                 break;
             }
